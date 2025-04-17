@@ -8,6 +8,8 @@ export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SIGNING_SECRET;
 
+  console.log("req======", req);
+
   if (!WEBHOOK_SECRET) {
     throw new Error(
       "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
@@ -78,6 +80,8 @@ export async function POST(req: Request) {
         role: user.role || "USER", // Default role to "USER" if not provided
       },
     });
+
+    console.log("dbUser=========", dbUser);
 
     // Update user's metadata in Clerk with the role information
     const client = await clerkClient();
