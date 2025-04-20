@@ -1,5 +1,17 @@
-const DashboardLayout = () => {
-  return <div>layout</div>;
-};
+import { ThemeProvider } from "next-themes";
+import { ReactNode } from "react";
 
-export default DashboardLayout;
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  return (
+    <div>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        enableSystem
+        disableTransitionOnChange
+      >
+        {children}
+      </ThemeProvider>
+    </div>
+  );
+}

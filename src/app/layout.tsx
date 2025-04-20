@@ -1,9 +1,17 @@
-import { ClerkProvider } from "@clerk/nextjs";
+// Next.js
 import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
 import { Barlow, Inter } from "next/font/google";
+
+// Global css
 import "./globals.css";
 
+// Clerk provider
+import { ClerkProvider } from "@clerk/nextjs";
+
+// Toast
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+
+// Fonts
 const interFont = Inter({ subsets: ["latin"] });
 const barlowFont = Barlow({
   subsets: ["latin"],
@@ -11,10 +19,11 @@ const barlowFont = Barlow({
   variable: "--font-barlow",
 });
 
+// Metadata
 export const metadata: Metadata = {
-  title: "Fullstack Multivendor Ecommerce",
+  title: "GoShop",
   description:
-    "Welcome to Multivendor Ecommerce application, your desired products are here!",
+    "Welcome to GoShop, your ultimate destination for seamless online shopping! Discover a vast array of products from trusted sellers, all in one convenient marketplace. With GoShop, shopping is made easy, fast, and enjoyable. Find everything you need, from fashion and electronics to home essentials, and experience the joy of hassle-free online shopping. Start exploring today!",
 };
 
 export default function RootLayout({
@@ -26,14 +35,8 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${interFont.className} ${barlowFont.variable}`}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
+          {children}
+          <SonnerToaster position="bottom-left" />
         </body>
       </html>
     </ClerkProvider>

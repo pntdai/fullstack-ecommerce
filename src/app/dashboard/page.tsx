@@ -1,5 +1,5 @@
-import { EUserRole } from "@/constant/enum";
-import { PORTAL_PATHS } from "@/constant/path";
+import { EUserRole } from "@/constants/enum";
+import { PORTAL_PATHS } from "@/constants/path";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
