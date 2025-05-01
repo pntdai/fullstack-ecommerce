@@ -6,10 +6,10 @@ import { FC } from "react";
 import { cn } from "@/lib/utils";
 import LogoImg from "../../../public/assets/icons/logo-1.png";
 
-interface LogoProps {
+type LogoProps = {
   width: string;
   height: string;
-}
+};
 
 const Logo: FC<LogoProps> = ({ width, height }) => {
   return (
