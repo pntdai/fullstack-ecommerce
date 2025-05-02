@@ -10,6 +10,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 // Toast
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 
 // Fonts
 const interFont = Inter({ subsets: ["latin"] });
@@ -36,6 +37,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${interFont.className} ${barlowFont.variable}`}>
           {children}
+          <Toaster />
           <SonnerToaster position="bottom-left" />
         </body>
       </html>

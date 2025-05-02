@@ -1,15 +1,7 @@
 "use client";
 
 import ImageUpload from "@/components/shared/image-upload";
-import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -21,8 +13,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CategoryFormSchema } from "@/lib/schemas";
+import { upsertCategory } from "@/queries/category";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Category } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -36,13 +29,10 @@ interface CategoryDetailsProps {
 }
 
 const CategoryDetails: FC<CategoryDetailsProps> = ({ data }) => {
-  // Initializing necessary hooks
   const { toast } = useToast();
   const router = useRouter();
 
-  // Form hook for managing form state and validation
   const form = useForm<z.infer<typeof CategoryFormSchema>>({
-    mode: "onChange",
     resolver: zodResolver(CategoryFormSchema),
     defaultValues: {
       name: data?.name,
@@ -51,6 +41,41 @@ const CategoryDetails: FC<CategoryDetailsProps> = ({ data }) => {
       featured: data?.featured,
     },
   });
+
+  const handleSubmitCategory = async (
+    values: z.infer<typeof CategoryFormSchema>
+  ) => {
+    console.log(values);
+    try {
+      const response = await upsertCategory({
+        id: data?.id ? data.id : v4(),
+        name: values.name,
+        image: values.image[0].url,
+        url: values.url,
+        featured: values.featured,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      toast({
+        title: data?.id
+          ? "Category has been updated."
+          : `Congratulations! '${response?.name}' is now created.`,
+      });
+
+      if (data?.id) {
+        router.refresh();
+      } else {
+        router.push("/dashboard/admin/categories");
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Oops!",
+        description: error.toString(),
+      });
+    }
+  };
 
   const isLoading = form.formState.isSubmitting;
 
@@ -65,112 +90,94 @@ const CategoryDetails: FC<CategoryDetailsProps> = ({ data }) => {
     }
   }, [data, form]);
 
-  const handleSubmit = async (values: z.infer<typeof CategoryFormSchema>) => {
-    return;
-  };
-
   return (
-    <AlertDialog>
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Category Information</CardTitle>
-          <CardDescription>
-            {data?.id
-              ? `Update ${data?.name} category information.`
-              : " Lets create a category. You can edit category later from the categories table or the category page."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-4"
-            >
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <ImageUpload
-                        type="profile"
-                        value={field.value.map((image) => image.url)}
-                        disabled={isLoading}
-                        onChange={(url) => field.onChange([{ url }])}
-                        onRemove={(url) =>
-                          field.onChange([
-                            ...field.value.filter(
-                              (current) => current.url !== url
-                            ),
-                          ])
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                disabled={isLoading}
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Category name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                disabled={isLoading}
-                control={form.control}
-                name="url"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Category url</FormLabel>
-                    <FormControl>
-                      <Input placeholder="/category-url" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="featured"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        // @ts-ignore
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Featured</FormLabel>
-                      <FormDescription>
-                        This Category will appear on the home page
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" disabled={isLoading}>
-                {isLoading
-                  ? "loading..."
-                  : data?.id
-                  ? "Save category information"
-                  : "Create category"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </AlertDialog>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmitCategory)}
+        className="space-y-4"
+      >
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <ImageUpload
+                  type="profile"
+                  value={field.value.map((image) => image.url)}
+                  disabled={isLoading}
+                  onChange={(url) => field.onChange([{ url }])}
+                  onRemove={(url) =>
+                    field.onChange([
+                      ...field.value.filter((current) => current.url !== url),
+                    ])
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel>Category Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Input category name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="url"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel>Category url</FormLabel>
+              <FormControl>
+                <Input placeholder="Input Category url" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="featured"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  // @ts-ignore
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>Featured</FormLabel>
+                <FormDescription>
+                  This Category will appear on the home page
+                </FormDescription>
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" disabled={isLoading}>
+          {isLoading
+            ? "loading..."
+            : data?.id
+            ? "Save category information"
+            : "Create category"}
+        </Button>
+      </form>
+    </Form>
   );
 };
 

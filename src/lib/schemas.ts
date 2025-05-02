@@ -25,7 +25,7 @@ export const CategoryFormSchema = z.object({
       invalid_type_error: "Category url must be a string",
     })
     .min(2, { message: "Category url must be at least 2 characters long." })
-    .max(50, { message: "Category url cannot exceed 50 characters." })
+    .max(200, { message: "Category url cannot exceed 200 characters." })
     .regex(/^(?!.*(?:[-_ ]){2,})[a-zA-Z0-9_-]+$/, {
       message:
         "Only letters, numbers, hyphen, and underscore are allowed in the category url, and consecutive occurrences of hyphens, underscores, or spaces are not permitted.",
