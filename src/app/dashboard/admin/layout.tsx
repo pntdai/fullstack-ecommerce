@@ -1,5 +1,5 @@
 import Header from "@/components/dashboard/header/header";
-import Sidebar from "@/components/sidebar/sidebar";
+import Sidebar from "@/components/dashboard/sidebar/sidebar";
 import { EUserRole } from "@/constants/enum";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";

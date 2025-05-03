@@ -1,10 +1,5 @@
 "use client";
 
-// React, Next.js
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-// UI Components
 import {
   Command,
   CommandEmpty,
@@ -13,15 +8,11 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-
-// Icons
 import { icons } from "@/constants/icons";
-
-// types
 import { DashboardSidebarMenuInterface } from "@/lib/types";
-
-// Utils
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function SidebarNavSeller({
   menuLinks,
@@ -42,7 +33,9 @@ export default function SidebarNavSeller({
             {menuLinks.map((link, index) => {
               let icon;
               const iconSearch = icons.find((icon) => icon.value === link.icon);
+
               if (iconSearch) icon = <iconSearch.path />;
+
               return (
                 <CommandItem
                   key={index}
