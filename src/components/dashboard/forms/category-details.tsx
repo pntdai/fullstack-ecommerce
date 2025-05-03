@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PORTAL_PATHS } from "@/constants/path";
 import { useToast } from "@/hooks/use-toast";
 import { CategoryFormSchema } from "@/lib/schemas";
 import { upsertCategory } from "@/queries/category";
@@ -66,7 +67,7 @@ const CategoryDetails: FC<CategoryDetailsProps> = ({ data }) => {
       if (data?.id) {
         router.refresh();
       } else {
-        router.push("/dashboard/admin/categories");
+        router.push(PORTAL_PATHS.LIST_ADMIN_CATEGORIES);
       }
     } catch (error: any) {
       toast({

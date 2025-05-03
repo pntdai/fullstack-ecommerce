@@ -72,3 +72,17 @@ export const upsertCategory = async (category: Category) => {
     throw error;
   }
 };
+
+// Function: getAllCategories
+// Description: Retrieves all categories from the database.
+// Permission Level: Public
+// Returns: Array of categories sorted by updatedAt date in descending order.
+export const getAllCategories = async () => {
+  const categories = await db.category.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  return categories;
+};

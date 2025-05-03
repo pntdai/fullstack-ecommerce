@@ -3,4 +3,5 @@ export const PORTAL_PATHS = {
   SELLER_DASHBOARD: "/dashboard/seller",
   USER_DASHBOARD: "/",
   LIST_ADMIN_CATEGORIES: "/dashboard/admin/categories",
+  CREATE_ADMIN_CATEGORIES: "/dashboard/admin/categories/new",
 };
