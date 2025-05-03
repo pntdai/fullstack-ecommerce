@@ -10,7 +10,6 @@ interface ModalProviderProps {
 export type ModalData = {
   user?: User;
 };
-
 type ModalContextType = {
   data: ModalData;
   isOpen: boolean;
@@ -49,11 +48,11 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     setData({});
   };
 
-  if (!isMounted) return null;
-
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  if (!isMounted) return null;
 
   return (
     <ModalContext.Provider value={{ data, setOpen, setClose, isOpen }}>
@@ -65,11 +64,9 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
 export const useModal = () => {
   const context = useContext(ModalContext);
-
   if (!context) {
     throw new Error("useModal must be used within the modal provider");
   }
-
   return context;
 };
 

@@ -174,7 +174,7 @@ const CategoryDetails: FC<CategoryDetailsProps> = ({ data }) => {
           {isLoading
             ? "loading..."
             : data?.id
-            ? "Save category information"
+            ? "Update category information"
             : "Create category"}
         </Button>
       </form>

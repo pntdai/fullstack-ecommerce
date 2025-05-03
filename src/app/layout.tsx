@@ -1,18 +1,11 @@
-// Next.js
-import type { Metadata } from "next";
-import { Barlow, Inter } from "next/font/google";
-
-// Global css
-import "./globals.css";
-
-// Clerk provider
-import { ClerkProvider } from "@clerk/nextjs";
-
-// Toast
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
+import ModalProvider from "@/providers/modal-provider";
+import { ClerkProvider } from "@clerk/nextjs";
+import type { Metadata } from "next";
+import { Barlow, Inter } from "next/font/google";
+import "./globals.css";
 
-// Fonts
 const interFont = Inter({ subsets: ["latin"] });
 const barlowFont = Barlow({
   subsets: ["latin"],
@@ -20,7 +13,6 @@ const barlowFont = Barlow({
   variable: "--font-barlow",
 });
 
-// Metadata
 export const metadata: Metadata = {
   title: "GoShop",
   description:
@@ -36,7 +28,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${interFont.className} ${barlowFont.variable}`}>
-          {children}
+          <ModalProvider>{children}</ModalProvider>
           <Toaster />
           <SonnerToaster position="bottom-left" />
         </body>
