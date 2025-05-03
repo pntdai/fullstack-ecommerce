@@ -4,4 +4,6 @@ export const PORTAL_PATHS = {
   USER_DASHBOARD: "/",
   LIST_ADMIN_CATEGORIES: "/dashboard/admin/categories",
   CREATE_ADMIN_CATEGORIES: "/dashboard/admin/categories/new",
+  LIST_ADMIN_SUB_CATEGORIES: "/dashboard/admin/subCategories",
+  CREATE_ADMIN_SUB_CATEGORIES: "/dashboard/admin/subCategories/new",
 };

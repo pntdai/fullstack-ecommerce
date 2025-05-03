@@ -19,7 +19,7 @@ export default async function AdminCategoriesPage() {
         </>
       }
       modalChildren={<CategoryDetails />}
-      newTabLink={PORTAL_PATHS.LIST_ADMIN_CATEGORIES}
+      newTabLink={PORTAL_PATHS.CREATE_ADMIN_CATEGORIES}
       filterValue="name"
       data={categories}
       searchPlaceholder="Search category name..."
