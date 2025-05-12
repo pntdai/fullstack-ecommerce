@@ -31,7 +31,7 @@ export default function SidebarNavAdmin({
   const pathname = usePathname();
 
   return (
-    <nav className="relative grow">
+    <nav className="relative grow h-screen overflow-y-auto">
       <Command className="rounded-lg overflow-visible bg-transparent">
         <CommandInput placeholder="Search..." />
         <CommandList className="py-2 overflow-visible">

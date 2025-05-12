@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Barlow, Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
 
 const interFont = Inter({ subsets: ["latin"] });
 const barlowFont = Barlow({
@@ -26,11 +27,18 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className={`${interFont.className} ${barlowFont.variable}`}>
-          <ModalProvider>{children}</ModalProvider>
-          <Toaster />
-          <SonnerToaster position="bottom-left" />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ModalProvider>{children}</ModalProvider>
+            <Toaster />
+            <SonnerToaster position="bottom-left" />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
