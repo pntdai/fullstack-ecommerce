@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { StoreFormSchema } from "@/lib/schemas";
+import { upsertStore } from "@/queries/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Store } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -50,7 +51,7 @@ const StoreDetails: FC<StoreDetailsProps> = ({ data }) => {
       logo: data?.logo ? [{ url: data?.logo }] : [],
       cover: data?.cover ? [{ url: data?.cover }] : [],
       url: data?.url,
-      featured: data?.featured,
+      featured: data?.featured ?? false,
       status: data?.status.toString(),
     },
   });
@@ -58,7 +59,34 @@ const StoreDetails: FC<StoreDetailsProps> = ({ data }) => {
   const handleSubmitCategory = async (
     values: z.infer<typeof StoreFormSchema>
   ) => {
-    console.log("values", values);
+    // Upserting category data
+    const response = await upsertStore({
+      id: data?.id ? data.id : v4(),
+      name: values.name,
+      description: values.description,
+      email: values.email,
+      phone: values.phone,
+      logo: values.logo[0].url,
+      cover: values.cover[0].url,
+      url: values.url,
+      featured: values?.featured ?? false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    // Displaying success message
+    toast({
+      title: data?.id
+        ? `Store ${response.name} has been updated.`
+        : `Congratulations! ${response.name} Store is now created.`,
+    });
+
+    // Redirect or Refresh data
+    if (data?.id) {
+      router.refresh();
+    } else {
+      router.push(`/dashboard/seller/stores/${response.url}`);
+    }
     try {
     } catch (error: any) {
       toast({
@@ -81,7 +109,7 @@ const StoreDetails: FC<StoreDetailsProps> = ({ data }) => {
         logo: [{ url: data?.logo }],
         cover: [{ url: data?.cover }],
         url: data?.url,
-        featured: data?.featured,
+        featured: data?.featured ?? false,
         status: data?.status,
       });
     }
