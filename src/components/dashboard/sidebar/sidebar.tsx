@@ -18,7 +18,6 @@ interface SidebarProps {
 
 const Sidebar: FC<SidebarProps> = async ({ isAdmin, stores }) => {
   const user = await currentUser();
-  console.log("strores", stores);
   return (
     <div className="w-[300px]  border-r h-screen p-4 flex flex-col fixed top-0 left-0 bottom-0">
       <Logo width="100%" height="180px" />
