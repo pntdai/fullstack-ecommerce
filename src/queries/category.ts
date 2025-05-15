@@ -1,8 +1,7 @@
 "use server";
 
-import { EUserRole } from "@/constants/enum";
-import { db } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
 import { Category } from "@prisma/client";
 
 // Function: upsertCategory
@@ -20,7 +19,7 @@ export const upsertCategory = async (category: Category) => {
     if (!user) throw new Error("Unauthenticated.");
 
     // Verify admin permission
-    if (user.privateMetadata.role !== EUserRole.ADMIN)
+    if (user.privateMetadata.role !== "ADMIN")
       throw new Error(
         "Unauthorized Access: Admin Privileges Required for Entry."
       );
@@ -47,13 +46,11 @@ export const upsertCategory = async (category: Category) => {
     // Throw error if category with same name or URL already exists
     if (existingCategory) {
       let errorMessage = "";
-
       if (existingCategory.name === category.name) {
         errorMessage = "A category with the same name already exists";
       } else if (existingCategory.url === category.url) {
         errorMessage = "A category with the same URL already exists";
       }
-
       throw new Error(errorMessage);
     }
 
@@ -65,7 +62,6 @@ export const upsertCategory = async (category: Category) => {
       update: category,
       create: category,
     });
-
     return categoryDetails;
   } catch (error) {
     throw error;
@@ -76,14 +72,59 @@ export const upsertCategory = async (category: Category) => {
 // Description: Retrieves all categories from the database.
 // Permission Level: Public
 // Returns: Array of categories sorted by updatedAt date in descending order.
-export const getAllCategories = async () => {
+export const getAllCategories = async (storeUrl?: string) => {
+  let storeId: string | undefined;
+
+  if (storeUrl) {
+    // Retrieve the storeId based on the storeUrl
+    const store = await db.store.findUnique({
+      where: { url: storeUrl },
+    });
+
+    // If no store is found, return an empty array or handle as needed
+    if (!store) {
+      return [];
+    }
+
+    storeId = store.id;
+  }
+
+  // Retrieve all categories from the database
   const categories = await db.category.findMany({
+    where: storeId
+      ? {
+          products: {
+            some: {
+              storeId: storeId,
+            },
+          },
+        }
+      : {},
+    include: {
+      subCategories: true,
+    },
     orderBy: {
       updatedAt: "desc",
     },
   });
-
   return categories;
+};
+
+// Function: getAllCategoriesForCategory
+// Description: Retrieves all SubCategories fro a category from the database.
+// Permission Level: Public
+// Returns: Array of subCategories of category sorted by updatedAt date in descending order.
+export const getAllCategoriesForCategory = async (categoryId: string) => {
+  // Retrieve all subcategories of category from the database
+  const subCategories = await db.subCategory.findMany({
+    where: {
+      categoryId,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+  return subCategories;
 };
 
 // Function: getCategory
@@ -93,8 +134,10 @@ export const getAllCategories = async () => {
 //   - categoryId: The ID of the category to be retrieved.
 // Returns: Details of the requested category.
 export const getCategory = async (categoryId: string) => {
+  // Ensure category ID is provided
   if (!categoryId) throw new Error("Please provide category ID.");
 
+  // Retrieve category
   const category = await db.category.findUnique({
     where: {
       id: categoryId,
@@ -110,22 +153,26 @@ export const getCategory = async (categoryId: string) => {
 //   - categoryId: The ID of the category to be deleted.
 // Returns: Response indicating success or failure of the deletion operation.
 export const deleteCategory = async (categoryId: string) => {
+  // Get current user
   const user = await currentUser();
 
+  // Check if user is authenticated
   if (!user) throw new Error("Unauthenticated.");
 
-  if (user.privateMetadata.role !== EUserRole.ADMIN)
+  // Verify admin permission
+  if (user.privateMetadata.role !== "ADMIN")
     throw new Error(
       "Unauthorized Access: Admin Privileges Required for Entry."
     );
 
+  // Ensure category ID is provided
   if (!categoryId) throw new Error("Please provide category ID.");
 
+  // Delete category from the database
   const response = await db.category.delete({
     where: {
       id: categoryId,
     },
   });
-
   return response;
 };

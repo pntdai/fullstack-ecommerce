@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Trash } from "lucide-react";
-import { CldUploadWidget } from "next-cloudinary";
-import Image from "next/image";
 import { FC, useEffect, useState } from "react";
+import Image from "next/image";
+import { CldUploadWidget } from "next-cloudinary";
+import { Button } from "@/components/ui/button";
+import { Trash } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type ImageUploadProps = {
   disabled?: boolean;
@@ -55,7 +55,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
     return (
       <div
         className={cn(
-          "relative rounded-full w-52 h-52 bg-gray-200 border-2 border-white shadow-2xl overflow-visible",
+          "relative  rounded-full w-52 h-52  bg-gray-200 border-2 border-white shadow-2xl overflow-visible",
           {
             "bg-red-100": error,
             "animate-pulse": isBouncing,
